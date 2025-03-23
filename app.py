@@ -14,9 +14,15 @@ def encrypt_password(password):
     aes_key = get_random_bytes(16)
     cipher = AES.new(aes_key, AES.MODE_EAX)
     ciphertext, tag = cipher.encrypt_and_digest(password)
-    nonce = cipher.nonce
-    stored_text = nonce + tag + ciphertext
-    return stored_text
+    with open("encrypted.bin", wb) as file:
+        file.write(tag)
+        file.write(cipher.nonce)
+        file.write(ciphertext)
+    return cipher
+    
+def decrypt_password(password, key):
+    
+    pass
 
 # Test Case
 pass_word = "testpass011"
