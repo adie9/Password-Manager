@@ -10,5 +10,14 @@ import os, sqlite3
 #    return "<h1>Password Manager</h1>"
 
 def encrypt_password(password):
-    key = get_random_bytes(16)
-    pass
+    password = password.encode()
+    aes_key = get_random_bytes(16)
+    cipher = AES.new(aes_key, AES.MODE_EAX)
+    ciphertext, tag = cipher.encrypt_and_digest(password)
+    nonce = cipher.nonce
+    stored_text = nonce + tag + ciphertext
+    return stored_text
+
+# Test Case
+pass_word = "testpass011"
+print(encrypt_password(pass_word))
