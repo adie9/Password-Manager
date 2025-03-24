@@ -51,3 +51,5 @@ while True:
             print("Listing services...")
         case "5":
             break
+        case default:
+            print("Not a valid option...")
