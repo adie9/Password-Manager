@@ -9,6 +9,7 @@ import os, sqlite3
 #def it_inventory():
 #    return "<h1>Password Manager</h1>"
 
+# Encrypting password using AES mode EAX
 def encrypt_password(password, key):
     password = password.encode()
     cipher = AES.new(key, AES.MODE_EAX)
@@ -26,14 +27,27 @@ def decrypt_password(encrypted_password, key):
     return decrypted_password.decode()
 
 def save_password(service, username, password):
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (service text, username text, encrypted_password text)''')
     pass
 
 
 # Test Case
 pass_word = "testpass011"
 aes_key = get_random_bytes(16)
-encrypted_password = encrypt_password(pass_word, aes_key)
-decrypted_password = decrypt_password(encrypted_password, aes_key)
-print(encrypted_password)
-print(decrypted_password)
 
+while True:
+    user_choice = input("Select option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
+
+    match user_choice:
+        case "1":
+            print("Saving password...")
+        case "2":
+            print("Deleting password...")
+        case "3":
+            print("Getting password...")
+        case "4":
+            print("Listing services...")
+        case "5":
+            break
