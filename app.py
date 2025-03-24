@@ -27,7 +27,55 @@ def decrypt_password(encrypted_password, key):
     return decrypted_password.decode()
 
 def save_password(service, username, password):
-    pass
+    pass_word = encrypt_password(password, aes_key)
+    print("Saving password...")
+
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute("INSERT OR REPLACE INTO passwords (service, username, encrypted_password) values (?, ?, ?)", (service, username, pass_word))
+    conn.commit()
+    conn.close()
+
+    print("Password saved...")
+
+def delete_password(service, username):
+    print("Deleting password...")
+
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM passwords WHERE (service, username) = (?, ?)", (service, username))
+    conn.commit()
+    conn.close()
+
+    print("Password deleted...")
+
+def get_password(service, username):
+    print("Getting password...")
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT encrypted_password FROM passwords WHERE (service, username) = (?, ?)", (service_name, user_name))
+    except:
+        print("Service doesn't exist in database...")
+
+    results = cursor.fetchone()
+    conn.close()
+
+    decrypted_password = decrypt_password(results, aes_key)
+    print(decrypted_password)
+
+def list_services():
+    print("Listing services...")
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT service FROM passwords")
+    results = cursor.fetchall()
+    conn.close()
+
+    if len(results) == 0:
+        print("There are currently no services in the database...")
+    else: print(results)
 
 
 # Test Case
@@ -45,61 +93,30 @@ if __name__ == "__main__":
 
         match user_choice:
             case "1":
-                service = input("Enter service name: ")
+                service_name = input("Enter service name: ")
                 user_name = input("Enter username: ")
                 pass_word = getpass.getpass("Enter a password: ")
 
-                pass_word = encrypt_password(pass_word, aes_key)
-                print("Saving password...")
-
-                conn = sqlite3.connect("password_storage.db")
-                cursor = conn.cursor()
-                cursor.execute("INSERT OR REPLACE INTO passwords (service, username, encrypted_password) values (?, ?, ?)", (service, user_name, pass_word))
-                conn.commit()
-                conn.close()
-
-                print("Password saved...")
+                save_password(service_name, user_name, pass_word)
+                
             case "2":
-                service = input("Enter service name: ")
+                service_name = input("Enter service name: ")
                 user_name = input("Enter username: ")
-                print("Deleting password...")
+                
+                delete_password(service_name, user_name)
 
-                conn = sqlite3.connect("password_storage.db")
-                cursor = conn.cursor()
-                cursor.execute("DELETE FROM passwords WHERE (service, username) = (?, ?)", (service, user_name))
-                conn.commit()
-                conn.close()
-
-                print("Password deleted...")
             case "3":
-                service = input("Input service name: ")
+                service_name = input("Input service name: ")
                 user_name = input("Input username: ")
-                print("Getting password...")
-                conn = sqlite3.connect("password_storage.db")
-                cursor = conn.cursor()
+                
+                get_password(service_name, user_name)
 
-                try:
-                    cursor.execute(f"SELECT encrypted_password from passwords WHERE service = {service}")
-                except:
-                    print("Service doesn't exist in database...")
-
-                results = cursor.fetchall()
-                conn.close()
-
-                print(results)
             case "4":
-                print("Listing services...")
-                conn = sqlite3.connect("password_storage.db")
-                cursor = conn.cursor()
-                cursor.execute('''SELECT service FROM passwords''')
-                results = cursor.fetchall()
-                conn.close()
+                list_services()
 
-                if len(results) == 0:
-                    print("There are currently no services in the database...")
-                else: print(results)
             case "5":
                 break
+
             case "6": # Temporary case for checking if table operations are working
                 print("Displaying table...")
                 conn = sqlite3.connect("password_storage.db")
