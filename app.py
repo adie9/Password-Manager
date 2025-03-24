@@ -60,7 +60,17 @@ if __name__ == "__main__":
 
                 print("Password saved...")
             case "2":
+                service = input("Enter service name: ")
+                user_name = input("Enter username: ")
                 print("Deleting password...")
+
+                conn = sqlite3.connect("password_storage.db")
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM passwords WHERE (service, username) = (?, ?)", (service, user_name))
+                conn.commit()
+                conn.close()
+
+                print("Password deleted...")
             case "3":
                 service = input("Input service name: ")
                 user_name = input("Input username: ")
