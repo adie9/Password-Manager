@@ -27,29 +27,42 @@ def decrypt_password(encrypted_password, key):
     return decrypted_password.decode()
 
 def save_password(service, username, password):
-    conn = sqlite3.connect("password_storage.db")
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (service text, username text, encrypted_password text)''')
     pass
 
 
 # Test Case
-pass_word = "testpass011"
-aes_key = get_random_bytes(16)
+if __name__ == "__main__":
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (service text, username text, encrypted_password text)''')
+    conn.commit()
+    conn.close()
+    
+    pass_word = "testpass011"
+    aes_key = get_random_bytes(16)
 
-while True:
-    user_choice = input("Select option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
+    while True:
+        user_choice = input("Select option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
 
-    match user_choice:
-        case "1":
-            print("Saving password...")
-        case "2":
-            print("Deleting password...")
-        case "3":
-            print("Getting password...")
-        case "4":
-            print("Listing services...")
-        case "5":
-            break
-        case default:
-            print("Not a valid option...")
+        match user_choice:
+            case "1":
+                print("Saving password...")
+            case "2":
+                print("Deleting password...")
+            case "3":
+                print("Getting password...")
+            case "4":
+                print("Listing services...")
+                conn = sqlite3.connect("password_storage.db")
+                cursor = conn.cursor()
+                cursor.execute('''SELECT service FROM passwords''')
+                results = cursor.fetchall()
+                conn.close()
+
+                if len(results) == 0:
+                    print("There are currently no services in the database...")
+                else: print(results)
+            case "5":
+                break
+            case default:
+                print("Not a valid option...")
