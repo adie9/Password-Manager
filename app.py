@@ -1,13 +1,6 @@
-from flask import Flask
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 import os, sqlite3, getpass
-
-#app = Flask(__name__)
-
-#@app.route("/")
-#def it_inventory():
-#    return "<h1>Password Manager</h1>"
 
 # Encrypting password using AES mode GCM
 def encrypt_password(password, key):
@@ -22,12 +15,6 @@ def decrypt_password(encrypted_password, key):
     nonce = encrypted_password[:12]
     tag = encrypted_password[12:28]
     ciphertext = encrypted_password[28:]
-    
-
-    # At beginning, nonce =  b'\xf2:\xca\x06&\xe4\x80U\x0c\xd0\xfe\xc8' , ciphertext =  b'x^\x83\xfe\xa3\xd6\x0f1C\xe1' , and tag =  b'i\r]\x94M\xac\xf7\x9d\xfd\x8eQ\xf4\xb4h\xc5\x1e'
-    # At end, nonce =        b'\xf2:\xca\x06&\xe4\x80U\x0c\xd0\xfe\xc8' , ciphertext =  b'x^\x83\xfe\xa3\xd6\x0f1C\xe1i\r]' , and tag =  b'\x94M\xac\xf7\x9d\xfd\x8eQ\xf4\xb4h\xc5\x1e'
-    
-    print("At end, nonce = ", nonce, ", ciphertext = ", ciphertext, ", and tag = ", tag)
     cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
     password = cipher.decrypt_and_verify(ciphertext, tag)
     return password.decode()
@@ -58,31 +45,31 @@ def save_password(service, username, password):
 
 def delete_password(service, username):
     print("Deleting password...")
-
     conn = sqlite3.connect("password_storage.db")
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM passwords WHERE (service, username) = (?, ?)", (service, username))
+    cursor.execute("SELECT * FROM passwords WHERE (service, username) = (?, ?)", (service, username))
+    results = cursor.fetchall()
+    if not results:
+        print("Password to delete does not exist. Returning to options...")
+    else:
+        cursor.execute("DELETE FROM passwords WHERE (service, username) = (?, ?)", (service, username))
+        print("Password deleted...")
     conn.commit()
     conn.close()
 
-    print("Password deleted...")
-
 def get_password(service, username):
-    print("Getting password...")
-    conn = sqlite3.connect("password_storage.db")
-    cursor = conn.cursor()
-
     try:
+        print("Getting password...")
+        conn = sqlite3.connect("password_storage.db")
+        cursor = conn.cursor()
         cursor.execute("SELECT encrypted_password FROM passwords WHERE (service, username) = (?, ?)", (service_name, user_name))
+        results = cursor.fetchone()
+        print(results)
+        conn.close()
+        decrypted_password = decrypt_password(results, aes_key)
+        print("The password is:", decrypted_password)
     except:
-        print("Service/Username doesn't exist in database...")
-
-    results = cursor.fetchone()
-    print(results)
-    conn.close()
-    
-    decrypted_password = decrypt_password(results, aes_key)
-    print("The password is: ", decrypted_password)
+        print("Service/Username pair doesn't exist in database...")
 
 def list_services():
     print("Listing services...\n")
@@ -92,7 +79,7 @@ def list_services():
     results = cursor.fetchall()
     conn.close()
 
-    if len(results) == 0:
+    if not results:
         print("There are currently no services in the database...")
     else:
         for service in results:
@@ -115,20 +102,20 @@ if __name__ == "__main__":
 
         match user_choice:
             case "1":
-                service_name = input("Enter service name: ")
+                service_name = input("Enter service name: ").lower()
                 user_name = input("Enter username: ")
                 pass_word = getpass.getpass("Enter a password: ")
 
                 save_password(service_name, user_name, pass_word)
                 
             case "2":
-                service_name = input("Enter service name: ")
+                service_name = input("Enter service name: ").lower()
                 user_name = input("Enter username: ")
                 
                 delete_password(service_name, user_name)
 
             case "3":
-                service_name = input("Input service name: ")
+                service_name = input("Input service name: ").lower()
                 user_name = input("Input username: ")
                 
                 get_password(service_name, user_name)
