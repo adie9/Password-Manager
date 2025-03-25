@@ -9,22 +9,23 @@ import os, sqlite3, getpass
 #def it_inventory():
 #    return "<h1>Password Manager</h1>"
 
-# Encrypting password using AES mode EAX
+# Encrypting password using AES mode GCM
 def encrypt_password(password, key):
+    nonce = get_random_bytes(12)
     password = password.encode()
-    cipher = AES.new(key, AES.MODE_EAX)
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
     ciphertext, tag = cipher.encrypt_and_digest(password)
-    nonce = cipher.nonce
     return nonce + tag + ciphertext
 
 def decrypt_password(encrypted_password, key):
-    nonce = encrypted_password[:16]
-    tag = encrypted_password[16:32]
-    ciphertext = encrypted_password[32:]
-
-    cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
-    decrypted_password = cipher.decrypt_and_verify(ciphertext, tag)
-    return decrypted_password.decode()
+    encrypted_password = encrypted_password[0] # Setting variable to binary inside tuple
+    nonce = encrypted_password[:12]
+    tag = encrypted_password[12:28]
+    ciphertext = encrypted_password[28:]
+        
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    password = cipher.decrypt_and_verify(ciphertext, tag)
+    return password.decode()
 
 def save_password(service, username, password):
     pass_word = encrypt_password(password, aes_key)
@@ -57,13 +58,14 @@ def get_password(service, username):
     try:
         cursor.execute("SELECT encrypted_password FROM passwords WHERE (service, username) = (?, ?)", (service_name, user_name))
     except:
-        print("Service doesn't exist in database...")
+        print("Service/Username doesn't exist in database...")
 
     results = cursor.fetchone()
+    print(results)
     conn.close()
-
+    
     decrypted_password = decrypt_password(results, aes_key)
-    print(decrypted_password)
+    print("The password is: ", decrypted_password)
 
 def list_services():
     print("Listing services...")
