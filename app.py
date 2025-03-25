@@ -135,7 +135,7 @@ if __name__ == "__main__":
             case "5":
                 break
 
-            case "6": # Temporary case for checking if table operations are working
+            case "6": # Secret option for checking if table operations are working
                 print("Displaying table...")
                 conn = sqlite3.connect("password_storage.db")
                 cursor = conn.cursor()
@@ -144,5 +144,6 @@ if __name__ == "__main__":
                 conn.close()
 
                 print(results)
+                
             case default:
                 print("Not a valid option...")
