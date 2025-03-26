@@ -42,6 +42,8 @@ def save_password(service, username, password):
                 print("Password saved...")
             case "no":
                 print("Returning to options...")
+            case default:
+                print("Input of 'yes' or 'no' not detected. Returning to options...")
     else:
         cursor.execute("INSERT OR REPLACE INTO passwords (service, username, encrypted_password) values (?, ?, ?)", (service, username, pass_word))
         print("Password saved...")
