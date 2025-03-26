@@ -281,3 +281,7 @@ case "5":
     break
 ```
 In this case, the program breaks the while loop and exits the program.
+
+## Conclusion
+
+I had a lot of fun building this project. I spent a lot of time reading documentation and researching the many errors I stumbled across. I was having trouble coming up with an idea for a Python project, until I remembered the dozens of passwords I had for accounts that I don't remember. I was glad to work on something that I could use everyday. It was interesting learning about AES and encryption/decryption in general. I was already somewhat familiar with SQL so it felt good to finally put it to practice. All in all, this project really helped me brush up on my coding skills, and tackle new skills as well.
