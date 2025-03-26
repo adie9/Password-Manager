@@ -77,8 +77,10 @@ def get_password(service, username):
         conn.close()
         decrypted_password = decrypt_password(results, aes_key)
         print("The password is:", decrypted_password)
-    except:
-        print("(service, username) pair doesn't exist in database...")
+    except ValueError:
+        print("Incorrect key was used.")
+    except TypeError:
+        print("(Service, Username) pair was not found in the database.")
 
 def list_services():
     print("Listing services...\n")
@@ -132,7 +134,7 @@ try:
             if len(aes_key) != 16:
                 print("Invalid key size. Try again.")
             else: break
-    
+        # IMULl60NkOO6FL7F
         
         while True:
             user_choice = input("\nSelect option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
