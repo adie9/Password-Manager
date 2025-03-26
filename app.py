@@ -127,8 +127,13 @@ try:
         conn.commit()
         conn.close()
         
-        aes_key = b'o+\xc3\xff\x00j\x0e\x07\xc8\xeb\xed\xd7\xb0\x04\x91\xbb' # hard-coded key only for demonstration
-
+        while True:
+            aes_key = getpass.getpass("Please enter your aes key (Must be 16 bytes long): ").encode()
+            if len(aes_key) != 16:
+                print("Invalid key size. Try again.")
+            else: break
+    
+        
         while True:
             user_choice = input("\nSelect option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
 
