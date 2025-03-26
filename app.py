@@ -6,6 +6,8 @@ import sqlite3, getpass
 def encrypt_password(password, key):
     nonce = get_random_bytes(12)
     password = password.encode()
+
+    # Creating cipher using key and nonce
     cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
     ciphertext, tag = cipher.encrypt_and_digest(password)
     return nonce + tag + ciphertext # Concatenating nonce, tag, and ciphertext for retrieval later
@@ -19,6 +21,7 @@ def decrypt_password(encrypted_password, key):
     tag = encrypted_password[12:28]
     ciphertext = encrypted_password[28:]
 
+    # Creating cipher using key and nonce
     cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
     password = cipher.decrypt_and_verify(ciphertext, tag)
     return password.decode()
@@ -78,6 +81,7 @@ def get_password(service, username):
         print(results)
         conn.close()
 
+        # Calling decrypt_password() function
         decrypted_password = decrypt_password(results, aes_key)
         print("The password is:", decrypted_password)
     except ValueError:
@@ -176,16 +180,16 @@ try:
                     print("Exiting program...")
                     break
 
-                case "6": # Secret option for checking if table operations are working
-                    print("Displaying table...")
+                #case "6": # Secret option for checking if table operations are working
+                    #print("Displaying table...")
 
-                    conn = sqlite3.connect("password_storage.db")
-                    cursor = conn.cursor()
-                    cursor.execute("SELECT * from passwords")
-                    results = cursor.fetchall()
-                    conn.close()
+                    #conn = sqlite3.connect("password_storage.db")
+                    #cursor = conn.cursor()
+                    #cursor.execute("SELECT * from passwords")
+                    #results = cursor.fetchall()
+                    #conn.close()
 
-                    print(results)
+                   #print(results)
                     
                 case default:
                     print("Not a valid option...")

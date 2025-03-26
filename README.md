@@ -25,6 +25,8 @@ The key used for encryption and decryption is input by the user at the beginning
 def encrypt_password(password, key):
     nonce = get_random_bytes(12)
     password = password.encode()
+
+    # Creating cipher using key and nonce
     cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
     ciphertext, tag = cipher.encrypt_and_digest(password)
     return nonce + tag + ciphertext
@@ -42,6 +44,7 @@ def decrypt_password(encrypted_password, key):
     tag = encrypted_password[12:28]
     ciphertext = encrypted_password[28:]
 
+    # Creating cipher using key and nonce
     cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
     password = cipher.decrypt_and_verify(ciphertext, tag)
     return password.decode()
@@ -226,6 +229,7 @@ def get_password(service, username):
         print(results)
         conn.close()
 
+        # Calling decrypt_password() function
         decrypted_password = decrypt_password(results, aes_key)
         print("The password is:", decrypted_password)
     except ValueError:
