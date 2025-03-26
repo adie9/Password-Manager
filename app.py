@@ -93,7 +93,7 @@ def list_services():
     else:
         for service in results:
             print(service)
-            
+
 # Functions that checks to see if there are spaces in any of the inputs
 def service_is_valid():
     while True:
@@ -119,53 +119,56 @@ def password_is_valid():
     
 
 # Main
-if __name__ == "__main__":
-    conn = sqlite3.connect("password_storage.db")
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (service text UNIQUE, username text UNIQUE, encrypted_password BLOB)''')
-    conn.commit()
-    conn.close()
-    
-    aes_key = b'o+\xc3\xff\x00j\x0e\x07\xc8\xeb\xed\xd7\xb0\x04\x91\xbb' # hard-coded key only for demonstration
+try:
+    if __name__ == "__main__":
+        conn = sqlite3.connect("password_storage.db")
+        cursor = conn.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (service text UNIQUE, username text UNIQUE, encrypted_password BLOB)''')
+        conn.commit()
+        conn.close()
+        
+        aes_key = b'o+\xc3\xff\x00j\x0e\x07\xc8\xeb\xed\xd7\xb0\x04\x91\xbb' # hard-coded key only for demonstration
 
-    while True:
-        user_choice = input("\nSelect option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
+        while True:
+            user_choice = input("\nSelect option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
 
-        match user_choice:
-            case "1":
-                service_name = service_is_valid()
-                user_name = username_is_valid()
-                pass_word = password_is_valid()
+            match user_choice:
+                case "1":
+                    service_name = service_is_valid()
+                    user_name = username_is_valid()
+                    pass_word = password_is_valid()
 
-                save_password(service_name, user_name, pass_word)
-                
-            case "2":
-                service_name = service_is_valid()
-                user_name = username_is_valid()
-                
-                delete_password(service_name, user_name)
+                    save_password(service_name, user_name, pass_word)
+                    
+                case "2":
+                    service_name = service_is_valid()
+                    user_name = username_is_valid()
+                    
+                    delete_password(service_name, user_name)
 
-            case "3":
-                service_name = service_is_valid()
-                user_name = username_is_valid()
-                
-                get_password(service_name, user_name)
+                case "3":
+                    service_name = service_is_valid()
+                    user_name = username_is_valid()
+                    
+                    get_password(service_name, user_name)
 
-            case "4":
-                list_services()
+                case "4":
+                    list_services()
 
-            case "5":
-                break
+                case "5":
+                    break
 
-            case "6": # Secret option for checking if table operations are working
-                print("Displaying table...")
-                conn = sqlite3.connect("password_storage.db")
-                cursor = conn.cursor()
-                cursor.execute("SELECT * from passwords")
-                results = cursor.fetchall()
-                conn.close()
+                case "6": # Secret option for checking if table operations are working
+                    print("Displaying table...")
+                    conn = sqlite3.connect("password_storage.db")
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT * from passwords")
+                    results = cursor.fetchall()
+                    conn.close()
 
-                print(results)
-                
-            case default:
-                print("Not a valid option...")
+                    print(results)
+                    
+                case default:
+                    print("Not a valid option...")
+except KeyboardInterrupt:
+    print("\nProgram has been interrupted. Exiting program...")
