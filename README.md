@@ -6,6 +6,14 @@ This project entails creating a password manager in Python using AES encryption.
 
 ## Features
 
+### Imports
+
+```python
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+import sqlite3, getpass
+```
+
 ### Encryption/Decryption
 
 For AES encryption/decryption, I used the PyCrypto library. 
