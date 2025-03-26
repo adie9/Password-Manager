@@ -93,6 +93,28 @@ def list_services():
     else:
         for service in results:
             print(service)
+            
+# Functions that checks to see if there are spaces in any of the inputs
+def service_is_valid():
+    while True:
+        service = input("Enter service name: ").lower()
+        if " " in service:
+            print("No spaces are allowed. Try again.")
+        else: return service
+
+def username_is_valid():
+    while True:
+        username = input("Enter username: ")
+        if " " in username:
+            print("No spaces are allowed. Try again.")
+        else: return username
+
+def password_is_valid():
+    while True:
+        password = getpass.getpass("Enter a password: ")
+        if " " in password:
+            print("No spaces are allowed. Try again.")
+        else: return password
 
     
 
@@ -111,21 +133,21 @@ if __name__ == "__main__":
 
         match user_choice:
             case "1":
-                service_name = input("Enter service name: ").lower()
-                user_name = input("Enter username: ")
-                pass_word = getpass.getpass("Enter a password: ")
+                service_name = service_is_valid()
+                user_name = username_is_valid()
+                pass_word = password_is_valid()
 
                 save_password(service_name, user_name, pass_word)
                 
             case "2":
-                service_name = input("Enter service name: ").lower()
-                user_name = input("Enter username: ")
+                service_name = service_is_valid()
+                user_name = username_is_valid()
                 
                 delete_password(service_name, user_name)
 
             case "3":
-                service_name = input("Input service name: ").lower()
-                user_name = input("Input username: ")
+                service_name = service_is_valid()
+                user_name = username_is_valid()
                 
                 get_password(service_name, user_name)
 
