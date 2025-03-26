@@ -156,6 +156,7 @@ try:
                     list_services()
 
                 case "5":
+                    print("Exiting program...")
                     break
 
                 case "6": # Secret option for checking if table operations are working
