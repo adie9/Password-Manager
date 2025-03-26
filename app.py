@@ -102,6 +102,8 @@ def service_is_valid():
         service = input("Enter service name: ").lower()
         if " " in service:
             print("No spaces are allowed. Try again.")
+        elif not service:
+            print("Input cannot be empty. Try again.")
         else: return service
 
 def username_is_valid():
@@ -109,6 +111,8 @@ def username_is_valid():
         username = input("Enter username: ")
         if " " in username:
             print("No spaces are allowed. Try again.")
+        elif not username:
+            print("Input cannot be empty. Try again.")
         else: return username
 
 def password_is_valid():
@@ -116,6 +120,8 @@ def password_is_valid():
         password = getpass.getpass("Enter a password: ")
         if " " in password:
             print("No spaces are allowed. Try again.")
+        elif not password:
+            print("Input cannot be empty. Try again.")
         else: return password
 
     
@@ -168,6 +174,7 @@ try:
 
                 case "6": # Secret option for checking if table operations are working
                     print("Displaying table...")
+
                     conn = sqlite3.connect("password_storage.db")
                     cursor = conn.cursor()
                     cursor.execute("SELECT * from passwords")
@@ -178,5 +185,6 @@ try:
                     
                 case default:
                     print("Not a valid option...")
+
 except KeyboardInterrupt:
     print("\nProgram has been interrupted. Exiting program...")
