@@ -123,6 +123,7 @@ def password_is_valid():
 # Main
 try:
     if __name__ == "__main__":
+        # Creating "passwords" table
         conn = sqlite3.connect("password_storage.db")
         cursor = conn.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (service text UNIQUE, username text UNIQUE, encrypted_password BLOB)''')
@@ -134,7 +135,6 @@ try:
             if len(aes_key) != 16:
                 print("Invalid key size. Try again.")
             else: break
-        # IMULl60NkOO6FL7F
         
         while True:
             user_choice = input("\nSelect option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
