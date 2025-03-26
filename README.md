@@ -8,7 +8,7 @@ This project entails creating a password manager in Python using AES encryption.
 
 ### Encryption/Decryption
 
-For AES encryption/decryption, I used the PyCrypto library. The function for encryption is shown below:
+For AES encryption/decryption, I used the PyCrypto library. 
 
 ```python
 # Encrypting password using AES mode GCM
@@ -20,7 +20,7 @@ def encrypt_password(password, key):
     return nonce + tag + ciphertext
 ```
 
-The function takes in the password and key (16 bytes) that the user input. It generates a random nonce with a length of 12 bytes and encodes the password. The function creates a cipher using the key and nonce, which creates a ciphertext and tag. The function returns the concatenated value of the nonce, tag, and ciphertext. This concatenation is important when it comes to decrypting the password.
+The encrypt_password function takes in the password and key (16 bytes) that the user input. It generates a random nonce with a length of 12 bytes and encodes the password. The function creates a cipher using the key and nonce, which creates a ciphertext and tag. The function returns the concatenated value of the nonce, tag, and ciphertext. This concatenation is important when it comes to decrypting the password.
 
 ```python
 # Decrypting password using AES mode GCM
@@ -37,12 +37,23 @@ def decrypt_password(encrypted_password, key):
     return password.decode()
 ```
 
-The function takes in the encrypted password and key (16 bytes). After accessing the value that contains the concatenation in encrypted_password,
+The decrypt_password function takes in the encrypted password and key (16 bytes). After accessing the value that contains the concatenation in encrypted_password,
 the nonce, tag, and ciphertext are retrieved by splicing the concatenation based on their respective sizes. The cipher is once again created using the values of the key and tag, and the encrypted password is returned (If the correct key is used).
 
 ### SQLite Database
 
+The SQLite database was used to save/update, get, and delete passwords.
 
+```python
+# Creating "passwords" table
+conn = sqlite3.connect("password_storage.db")
+cursor = conn.cursor()
+cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (service text UNIQUE, username text UNIQUE, encrypted_password BLOB)''')
+conn.commit()
+conn.close()
+```
+
+The program connects to the database by name, and creates a .db file if it doesn't yet exist. Then the program creates a table (if it doesn't yet exist) called "passwords" with column names of "service", "username", and "encrypted_password". ```conn.commit()``` saves the changes to the database and ```conn.close()``` closes the connection.
 
 ### Main Program Options 
 
