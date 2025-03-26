@@ -125,7 +125,7 @@ match user_choice:
         save_password(service_name, user_name, pass_word)
 ```
 
-The "Save Password" function takes in three parameters: "service", "username", and "password". 
+The `save_password()` function takes in three parameters: `service`, `username`, and `password`. 
 
 ```python
 def save_password(service, username, password):
@@ -200,10 +200,80 @@ It performs the same operations as `save_password()` at the start, connecting to
 
 If there are no passwords matching the (service, username) pair, then the function will inform the user and return to options. Otherwise, it will delete the entry from the database.
 
-
-
 #### Get Password
+
+If the user inputs '3', the code block under case "3" will run.
+
+```python
+case "3":
+    service_name = service_is_valid()
+    user_name = username_is_valid()
+    
+    get_password(service_name, user_name)
+```
+
+It performs the same operations as `delete_password()` at the start.
+
+```python
+# Function that returns password based on service and username input
+def get_password(service, username):
+    try: # Try/except clause that throws exception if the (service, username) pair doesn't exist in the database OR key doesn't match
+        print("Getting password...")
+        conn = sqlite3.connect("password_storage.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT encrypted_password FROM passwords WHERE (service, username) = (?, ?)", (service_name, user_name))
+        results = cursor.fetchone()
+        print(results)
+        conn.close()
+
+        decrypted_password = decrypt_password(results, aes_key)
+        print("The password is:", decrypted_password)
+    except ValueError:
+        print("Incorrect key was used.")
+    except TypeError:
+        print("(Service, Username) pair was not found in the database.")
+```
+
+The function passes results into the `decrypt_password()` function along with the key. I added a try-except block to catch the exceptions that would arise when the (service, username) pair didn't exist in the database OR if the key the user input was wrong. If no errors occurred, the function would return the decrypted password to the user.
 
 #### List Services
 
+If the user inputs '4', the code block under case "4' will run.
+
+```python
+case "4":
+    list_services()
+```
+
+The only code is a call to the `list_services()` function, which looks like this:
+
+```python
+# Function that lists the services in the database
+def list_services():
+    print("Listing services...\n")
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT service FROM passwords")
+    results = cursor.fetchall()
+    conn.close()
+
+    if not results:
+        print("There are currently no services in the database...")
+    else:
+        for service in results:
+            print(service)
+
+```
+
+This function will connect to the database and execute a simple query, returning the services in the table. If there are no services in the table, the program will inform the user.
+
 #### Exit
+
+If the user inputs '5', the code block under case "5" will run.
+
+```python
+case "5":
+    print("Exiting program...")
+    break
+```
+In this case, the program breaks the while loop and exits the program.

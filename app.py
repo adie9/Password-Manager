@@ -69,7 +69,7 @@ def delete_password(service, username):
 
 # Function that returns password based on service and username input
 def get_password(service, username):
-    try: # Try/except clause that throws exception if the (service, username) pair doesn't exist in the database
+    try: # Try/except clause that throws exception if the (service, username) pair doesn't exist in the database OR key doesn't match
         print("Getting password...")
         conn = sqlite3.connect("password_storage.db")
         cursor = conn.cursor()
@@ -77,6 +77,7 @@ def get_password(service, username):
         results = cursor.fetchone()
         print(results)
         conn.close()
+
         decrypted_password = decrypt_password(results, aes_key)
         print("The password is:", decrypted_password)
     except ValueError:
@@ -84,6 +85,7 @@ def get_password(service, username):
     except TypeError:
         print("(Service, Username) pair was not found in the database.")
 
+# Function that lists the services in the database
 def list_services():
     print("Listing services...\n")
     conn = sqlite3.connect("password_storage.db")
