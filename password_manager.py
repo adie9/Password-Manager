@@ -78,7 +78,6 @@ def get_password(service, username):
         cursor = conn.cursor()
         cursor.execute("SELECT encrypted_password FROM passwords WHERE (service, username) = (?, ?)", (service_name, user_name))
         results = cursor.fetchone()
-        print(results)
         conn.close()
 
         # Calling decrypt_password() function
