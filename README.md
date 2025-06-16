@@ -279,12 +279,42 @@ def list_services():
 
 This function will connect to the database and execute a simple query, returning the services in the table. If there are no services in the table, the program will inform the user.
 
-#### Exit
+### Get Username(s)
 
 If the user inputs '5', the code block under case "5" will run.
 
 ```python
 case "5":
+    service_name = service_is_valid()
+
+    get_username(service_name)
+```
+
+The only code is a call to the `get_username()` function which looks like this:
+
+```python
+def get_username(service):
+    print("Getting username(s)...\n")
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT username FROM passwords WHERE service = ?", (service,))
+    results = cursor.fetchall()
+    conn.close()
+
+    if not results:
+        print("That service doesn't exist in the database...")
+    for username in results:
+        print(username)
+```
+
+The function will connect to the database and perform a query that returns any usernames tied to the service name inputted by the user.
+
+#### Exit
+
+If the user inputs '6', the code block under case "6" will run.
+
+```python
+case "6":
     print("Exiting program...")
     break
 ```

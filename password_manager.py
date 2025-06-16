@@ -76,7 +76,7 @@ def get_password(service, username):
         print("Getting password...")
         conn = sqlite3.connect("password_storage.db")
         cursor = conn.cursor()
-        cursor.execute("SELECT encrypted_password FROM passwords WHERE (service, username) = (?, ?)", (service_name, user_name))
+        cursor.execute("SELECT encrypted_password FROM passwords WHERE (service, username) = (?, ?)", (service, username))
         results = cursor.fetchone()
         conn.close()
 
@@ -90,7 +90,18 @@ def get_password(service, username):
 
 # Function that returns username(s) based on service
 def get_username(service):
-    pass
+    print("Getting username(s)...\n")
+    conn = sqlite3.connect("password_storage.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT username FROM passwords WHERE service = ?", (service,))
+    results = cursor.fetchall()
+    conn.close()
+
+    if not results:
+        print("That service doesn't exist in the database...")
+    for username in results:
+        print(username)
+
 
 # Function that lists the services in the database
 def list_services():
@@ -154,7 +165,7 @@ try:
             else: break
         
         while True:
-            user_choice = input("\nSelect option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Exit\n\n")
+            user_choice = input("\nSelect option: \n\n [1] Save Password \n [2] Delete Password \n [3] Get Password \n [4] List Services \n [5] Get Username(s) \n [6] Exit\n\n")
 
             match user_choice:
                 case "1":
@@ -180,10 +191,15 @@ try:
                     list_services()
 
                 case "5":
+                    service_name = service_is_valid()
+
+                    get_username(service_name)
+
+                case "6":
                     print("Exiting program...")
                     break
 
-                #case "6": # Secret option for checking if table operations are working
+                #case "7": # Secret option for checking if table operations are working
                     #print("Displaying table...")
 
                     #conn = sqlite3.connect("password_storage.db")
