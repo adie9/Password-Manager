@@ -88,6 +88,10 @@ def get_password(service, username):
     except TypeError:
         print("(Service, Username) pair was not found in the database.")
 
+# Function that returns username(s) based on service
+def get_username(service):
+    pass
+
 # Function that lists the services in the database
 def list_services():
     print("Listing services...\n")
